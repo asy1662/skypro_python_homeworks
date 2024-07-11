@@ -1,5 +1,5 @@
-my_age = int("Введите ваш возраст: 45")
+my_age = int(input("Введите ваш возраст: "))
 print(f"Ваш возраст: {my_age}")
 
-my_age = int(45)+5
+my_age = my_age + 1
 print("Обновленный возраст:", my_age)
