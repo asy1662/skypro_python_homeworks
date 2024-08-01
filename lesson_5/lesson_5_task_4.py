@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+# Работа с Chrome
 driver = webdriver.Chrome()
 
 try:
@@ -24,12 +25,7 @@ finally:
     driver.quit()
 
 
-import time
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-
+# Работа с Firefox
 driver = webdriver.Firefox()
 
 try:
