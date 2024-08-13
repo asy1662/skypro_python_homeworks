@@ -59,38 +59,26 @@ def test_purchase(driver):
         driver.save_screenshot('submit_error.png')
         raise
 
-    try:
-        WebDriverWait(driver, 40).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "was-validated"))
-        )
-        print("Form was validated")
-    except Exception as e:
-        print(f"Timeout while waiting for form validation. Exception: {e}")
-        driver.save_screenshot('validation_timeout_error.png')
-        raise
-
+    # Validation checks
     for field_name in fields.keys():
-        field = driver.find_element(By.NAME, field_name)
-        if "is-valid" not in field.get_attribute("class").split():
-            driver.save_screenshot(f'field_{field_name}_validation_error.png')
-        assert "is-valid" in field.get_attribute("class").split(), f"Поле '{field_name}' должно быть подсвечено зеленым."
+        try:
+            field = WebDriverWait(driver, 40).until(
+                EC.visibility_of_element_located((By.ID, field_name))
+            )
+            if "alert-success" not in field.get_attribute("class").split():
+                driver.save_screenshot(f'field_{field_name}_validation_error.png')
+            assert "alert-success" in field.get_attribute("class").split(), f"Поле '{field_name}' должно быть подсвечено зеленым."
+        except Exception as e:
+            print(f"Validation error in field '{field_name}'. Exception: {e}")
+            raise
 
     try:
-        zip_code_field = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.NAME, "zip-code"))
+        zip_code_field = WebDriverWait(driver, 40).until(
+            EC.visibility_of_element_located((By.ID, "zip-code"))
         )
-        if "is-invalid" not in zip_code_field.get_attribute("class").split():
-            driver.save_screenshot('zip_code_validation_error.png')
-        assert "is-invalid" in zip_code_field.get_attribute("class").split(), "Поле 'Zip code' должно быть подсвечено красным."
+        if "alert-danger" not in zip_code_field.get_attribute("class").split():
+            driver.save_screenshot(f'field_zip-code_validation_error.png')
+        assert "alert-danger" in zip_code_field.get_attribute("class").split(), "Поле 'zip-code' должно быть подсвечено красным."
     except Exception as e:
-        print(f"Failed to validate zip code field. Exception: {e}")
-        driver.save_screenshot('zip_code_check_error.png')
-        raise
-
-    try:
-        error_message = driver.find_element(By.CSS_SELECTOR, "[name='zip-code'] + .invalid-feedback")
-        assert error_message.is_displayed(), "Сообщение об ошибке возле поля 'Zip code' должно отображаться."
-    except Exception as e:
-        print(f"Failed to find error message for zip code field. Exception: {e}")
-        driver.save_screenshot('zip_code_error_message_error.png')
+        print(f"Validation error in field 'zip-code'. Exception: {e}")
         raise
